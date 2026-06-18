@@ -3,6 +3,7 @@ import type { ActiveTab } from './types';
 import PortalsTab from './components/PortalsTab';
 import AdminTab from './components/AdminTab';
 import WhatsAppBroadcastManager from './components/WhatsAppBroadcastManager';
+import SocialMediaHandlerTab from './components/SocialMediaHandlerTab';
 import VoiceController from './components/VoiceController';
 import { LangType } from './utils/locale';
 import { useTranslation } from 'react-i18next';
@@ -26,6 +27,7 @@ export default function App() {
   const [portalSubTab, setPortalSubTab] = useState<string>('home');
   const [isGuidelinesOpen, setIsGuidelinesOpen] = useState(false);
   const [isWhatsAppManagerOpen, setIsWhatsAppManagerOpen] = useState(false);
+  const [isSocialHandlerOpen, setIsSocialHandlerOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'original' | 'glassNavy' | 'sunriseOrange'>(() => {
     return (localStorage.getItem('sxc_portal_theme') as 'original' | 'glassNavy' | 'sunriseOrange') || 'glassNavy';
@@ -214,24 +216,6 @@ export default function App() {
                 {t('adminDesk')}
               </button>
               <div className={`flex items-center gap-1 p-1 rounded-xl border shadow-sm ${isGlass ? 'bg-white/50 border-white/60' : 'bg-black/40 border-[#242427]'}`}>
-                {socialLinks.filter(link => link.url.trim()).map(link => {
-                  const Icon = getSocialIcon(link.id);
-                  return (
-                    <a
-                      key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      title={link.label}
-                      className={`p-2 rounded-lg transition-all hover:scale-110 ${isGlass ? 'hover:bg-white' : 'hover:bg-[#1C1C1F]'}`}
-                      style={{ color: link.color }}
-                    >
-                      <Icon className="w-4 h-4" />
-                    </a>
-                  );
-                })}
-              </div>
-              <div className={`flex items-center gap-1 p-1 rounded-xl border shadow-sm ${isGlass ? 'bg-white/50 border-white/60' : 'bg-black/40 border-[#242427]'}`}>
                 {/* Compact Theme Toggle */}
                 <button 
                   onClick={() => changeTheme(isGlass ? 'original' : 'glassNavy')} 
@@ -271,11 +255,12 @@ export default function App() {
               />
 
               <button 
-                onClick={() => setIsWhatsAppManagerOpen(!isWhatsAppManagerOpen)}
-                className={`p-2 rounded-xl border transition-all hover:scale-110 ${isGlass ? 'bg-green-500/10 hover:bg-green-500 border-green-500/30 text-green-600 hover:text-white shadow-sm' : 'bg-green-500/10 hover:bg-green-500 border-green-500/30 text-green-400 hover:text-white'}`}
-                title="WhatsApp Broadcast Manager"
+                onClick={() => setIsSocialHandlerOpen(true)}
+                className={`px-4 py-2 rounded-xl text-xs font-black transition-all duration-300 flex items-center gap-2 hover:-translate-y-0.5 hover:scale-105 ${isGlass ? 'bg-pink-500/10 hover:bg-pink-500 border border-pink-500/30 text-pink-600 hover:text-white shadow-sm' : 'bg-pink-500/10 hover:bg-pink-500 border border-pink-500/30 text-pink-400 hover:text-white'}`}
+                title="Social Media Handler — manage WhatsApp, social links, weekly posts & activity"
               >
-                <MessageCircle className="w-5 h-5" />
+                <Activity className="w-4 h-4" />
+                Social Handler
               </button>
 
               <button 
@@ -325,6 +310,17 @@ export default function App() {
               <div className="flex items-center gap-3">
                 <ShieldCheck className={`w-5 h-5 ${activeTab === 'admin' ? 'text-white' : 'text-[#F97316]'}`} />
                 <span>Admin Command Center</span>
+              </div>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button 
+              onClick={() => { setIsSocialHandlerOpen(true); setIsMobileMenuOpen(false); }}
+              className={`w-full px-4 py-3.5 rounded-xl text-sm font-black transition-all flex items-center justify-between min-h-[48px] border ${isGlass ? 'bg-white border-gray-100 hover:bg-gray-50 text-[#431407]' : 'bg-[#1C1C1F] border-[#242427] hover:bg-[#242427] text-gray-300'}`}
+            >
+              <div className="flex items-center gap-3">
+                <Activity className="w-5 h-5 text-pink-500" />
+                <span>Social Media Handler</span>
               </div>
               <ArrowRight className="w-4 h-4" />
             </button>
@@ -556,6 +552,17 @@ export default function App() {
           onClose={() => setIsWhatsAppManagerOpen(false)} 
           theme={theme} 
         />
+
+        {isSocialHandlerOpen && (
+          <SocialMediaHandlerTab
+            theme={theme}
+            onClose={() => setIsSocialHandlerOpen(false)}
+            onOpenWhatsAppBroadcast={() => {
+              setIsSocialHandlerOpen(false);
+              setIsWhatsAppManagerOpen(true);
+            }}
+          />
+        )}
 
       </main>
 

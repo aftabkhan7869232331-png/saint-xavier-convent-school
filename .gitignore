@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+server/social_handler_data.json
+server/social_handler_tokens.json
+server/auth_info_baileys/
