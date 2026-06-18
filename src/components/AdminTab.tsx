@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { ActiveTab } from '../types';
-import { ShieldCheck, Award, FileText, UserPlus, BookOpen, Cloud, Camera, ChevronLeft, LogOut, BadgeCheck, Video, Megaphone, Lock, Users } from 'lucide-react';
+import { ShieldCheck, Award, FileText, UserPlus, BookOpen, Cloud, Camera, ChevronLeft, LogOut, BadgeCheck, Video, Megaphone, Lock, Users, Share2 } from 'lucide-react';
 import { getTranslation } from '../utils/locale';
 
 import MarksheetTab from './MarksheetTab';
@@ -15,6 +15,7 @@ import CampusTourTab from './CampusTourTab';
 
 import AnnouncementsTab from './AnnouncementsTab';
 import UserSecurityTab from './UserSecurityTab';
+import SocialMediaDashboardTab from './SocialMediaDashboardTab';
 
 interface AdminTabProps {
   theme: 'original' | 'glassNavy' | 'sunriseOrange';
@@ -22,7 +23,7 @@ interface AdminTabProps {
   lang?: any;
 }
 
-type AdminTool = 'dashboard' | 'marksheet' | 'tc' | 'admission' | 'scholar' | 'scholar_register' | 'erp' | 'camera' | 'id_card' | 'campus_tour' | 'announcements' | 'security';
+type AdminTool = 'dashboard' | 'marksheet' | 'tc' | 'admission' | 'scholar' | 'scholar_register' | 'erp' | 'camera' | 'id_card' | 'campus_tour' | 'social_media' | 'announcements' | 'security';
 
 export default function AdminTab({ theme, setActiveTab, lang = 'en' }: AdminTabProps) {
   const isGlass = theme === 'glassNavy';
@@ -93,6 +94,7 @@ export default function AdminTab({ theme, setActiveTab, lang = 'en' }: AdminTabP
       { id: 'camera', label: 'AI Camera System', icon: Camera, color: 'text-red-500', bg: 'bg-red-500/10', border: 'hover:border-red-500/50' },
       { id: 'id_card', label: 'ID Card Generator', icon: BadgeCheck, color: 'text-indigo-500', bg: 'bg-indigo-500/10', border: 'hover:border-indigo-500/50' },
       { id: 'campus_tour', label: 'Campus Tours', icon: Video, color: 'text-pink-500', bg: 'bg-pink-500/10', border: 'hover:border-pink-500/50' },
+      { id: 'social_media', label: 'Social & Campus Hub', icon: Share2, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'hover:border-emerald-500/50' },
       { id: 'announcements', label: 'Announcements', icon: Megaphone, color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'hover:border-orange-500/50' },
       { id: 'security', label: 'User Security', icon: Lock, color: 'text-indigo-500', bg: 'bg-indigo-500/10', border: 'hover:border-indigo-500/50' },
     ] as const;
@@ -158,6 +160,7 @@ export default function AdminTab({ theme, setActiveTab, lang = 'en' }: AdminTabP
         {activeTool === 'camera' && <CameraSystemTab />}
         {activeTool === 'id_card' && <IDCardGeneratorTab theme={theme} />}
         {activeTool === 'campus_tour' && <CampusTourTab theme={theme} />}
+        {activeTool === 'social_media' && <SocialMediaDashboardTab theme={theme} />}
         {activeTool === 'announcements' && <AnnouncementsTab theme={theme} />}
         {activeTool === 'security' && <UserSecurityTab theme={theme} />}
       </div>

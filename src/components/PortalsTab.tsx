@@ -14,6 +14,16 @@ import StudentDashboard from './StudentDashboard';
 import TeacherDashboard from './TeacherDashboard';
 import DigitalLibraryTab from './DigitalLibraryTab';
 import ParticleBackground from './ParticleBackground';
+import {
+  CAMPUS_HUB_STORAGE_KEY,
+  DEFAULT_CAMPUS_HUB_ITEMS,
+  DEFAULT_SOCIAL_LINKS,
+  SOCIAL_LINKS_STORAGE_KEY,
+  getSocialIcon,
+  loadSettings,
+  type CampusHubItem,
+  type SocialLinkSetting
+} from '../settings';
 
 interface PortalsTabProps {
   theme?: 'original' | 'glassNavy' | 'sunriseOrange';
@@ -27,6 +37,12 @@ export default function PortalsTab({ theme = 'glassNavy', initialSubTab = 'home'
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [socialLinks, setSocialLinks] = useState<SocialLinkSetting[]>(() =>
+    loadSettings(SOCIAL_LINKS_STORAGE_KEY, DEFAULT_SOCIAL_LINKS)
+  );
+  const [campusHubItems, setCampusHubItems] = useState<CampusHubItem[]>(() =>
+    loadSettings(CAMPUS_HUB_STORAGE_KEY, DEFAULT_CAMPUS_HUB_ITEMS)
+  );
 
   // --- Login States ---
   const [isParentLoggedIn, setIsParentLoggedIn] = useState(() => {
@@ -175,6 +191,19 @@ export default function PortalsTab({ theme = 'glassNavy', initialSubTab = 'home'
     { id: 'n3', date: 'June 05, 2026', tag: 'Administration', title: 'Monsoon Uniform Guidelines & Bus Timings', desc: 'Given heavy rainfall alerts around Scheme 78, buses will run 15 minutes early. Parents are advised to make suitable pick-up arrangements.' }
   ]);
 
+  useEffect(() => {
+    const refreshPublicSettings = () => {
+      setSocialLinks(loadSettings(SOCIAL_LINKS_STORAGE_KEY, DEFAULT_SOCIAL_LINKS));
+      setCampusHubItems(loadSettings(CAMPUS_HUB_STORAGE_KEY, DEFAULT_CAMPUS_HUB_ITEMS));
+    };
+    window.addEventListener('sxc_public_settings_changed', refreshPublicSettings);
+    window.addEventListener('storage', refreshPublicSettings);
+    return () => {
+      window.removeEventListener('sxc_public_settings_changed', refreshPublicSettings);
+      window.removeEventListener('storage', refreshPublicSettings);
+    };
+  }, []);
+
   // 1. School Home Concept
   if (initialSubTab === 'home') {
     return (
@@ -293,6 +322,36 @@ export default function PortalsTab({ theme = 'glassNavy', initialSubTab = 'home'
               <div className="text-sm font-bold opacity-60 uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
+        </div>
+
+        {/* Campus Tour Video Hub */}
+        <div className="px-6 sm:px-8 mt-14 animate-slideUp">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black flex items-center gap-3">
+                <Video className="w-8 h-8 text-red-500" />
+                Campus Tour Video Hub
+              </h2>
+              <p className="text-sm opacity-60 mt-2 font-medium">Explore key campus spaces before booking a visit.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {campusHubItems.map(item => (
+              <div key={item.id} className={`overflow-hidden rounded-3xl border transition-all hover:-translate-y-1 hover:shadow-2xl ${isGlass ? 'bg-white/80 border-white/50' : 'bg-[#1C1C1F] border-white/10'}`}>
+                <div className="relative aspect-video overflow-hidden">
+                  <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute left-4 bottom-4 w-11 h-11 rounded-full bg-white/90 text-red-500 flex items-center justify-center shadow-lg">
+                    <Play className="w-5 h-5 fill-current" />
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-xl font-black mb-2">{item.title}</h3>
+                  <p className="text-sm opacity-70 font-medium leading-relaxed">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Heroes & Stars Section */}
@@ -423,15 +482,21 @@ export default function PortalsTab({ theme = 'glassNavy', initialSubTab = 'home'
             <div className="mt-5">
               <p className="text-[10px] uppercase font-black tracking-wider opacity-60 mb-3 block">🔗 Social Links / सोशल मीडिया:</p>
               <div className="flex flex-wrap gap-2">
-                <a href="https://facebook.com/saintxavierkhajrana" target="_blank" rel="referrer noopener" className={`p-2 py-1.5 rounded-lg border flex items-center gap-1.5 text-[10px] font-bold transition-all ${isGlass ? 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100' : 'bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/20 hover:bg-[#1877F2]/20'}`}>
-                  <Facebook className="w-3.5 h-3.5" /> Facebook
-                </a>
-                <a href="https://youtube.com/@saintxavierkhajrana" target="_blank" rel="referrer noopener" className={`p-2 py-1.5 rounded-lg border flex items-center gap-1.5 text-[10px] font-bold transition-all ${isGlass ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100' : 'bg-[#FF0000]/10 text-[#FF0000] border-[#FF0000]/20 hover:bg-[#FF0000]/20'}`}>
-                  <Youtube className="w-3.5 h-3.5" /> YouTube
-                </a>
-                <a href="https://instagram.com/saintxavierkhajrana" target="_blank" rel="referrer noopener" className={`p-2 py-1.5 rounded-lg border flex items-center gap-1.5 text-[10px] font-bold transition-all ${isGlass ? 'bg-pink-50 text-pink-600 border-pink-200 hover:bg-pink-100' : 'bg-[#E1306C]/10 text-[#E1306C] border-[#E1306C]/20 hover:bg-[#E1306C]/20'}`}>
-                  <Instagram className="w-3.5 h-3.5" /> Instagram
-                </a>
+                {socialLinks.filter(link => link.url.trim()).map(link => {
+                  const Icon = getSocialIcon(link.id);
+                  return (
+                    <a
+                      key={link.id}
+                      href={link.url}
+                      target="_blank"
+                      rel="referrer noopener"
+                      className={`p-2 py-1.5 rounded-lg border flex items-center gap-1.5 text-[10px] font-bold transition-all ${isGlass ? 'bg-white border-gray-200 hover:bg-gray-50' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                      style={{ color: link.color }}
+                    >
+                      <Icon className="w-3.5 h-3.5" /> {link.label}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>
